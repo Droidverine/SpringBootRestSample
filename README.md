@@ -96,8 +96,36 @@ Topic name: `weather-metrics`
 Group ID: `weather-consumer-group`
 
 ---
+## Tests
 
-## 📁 Project Structure
+This project includes **unit tests** using **JUnit 5** and **Mockito** to verify the service logic and data processing.
+
+### Run All Tests
+
+Run the following command in the project root:
+
+```
+mvn test
+```
+
+Or use your IDE (e.g., IntelliJ):
+> Right-click on the `test` directory or any test class → Run
+
+### 🔹 Test Coverage
+
+| Test Class                        | Description                            |
+|----------------------------------|----------------------------------------|
+| `WeatherMetricQueryServiceTest`  | Verifies logic for querying weather metrics |
+
+More tests (Kafka, REST controllers) can be added.
+
+###  Technologies Used
+
+- JUnit 5
+- Mockito
+- Spring Boot Starter Test
+
+##  Project Structure
 
 - `Controller` - REST endpoints
 - `Consumer` - Kafka listener
