@@ -1,0 +1,8 @@
+com/consumer/weatherapi/WeatherRest/Consumer/WeatherConsumerService.class
+com/consumer/weatherapi/WeatherRest/DTO/MetricQueryRequest.class
+com/consumer/weatherapi/WeatherRest/WeatherRestApplication.class
+com/consumer/weatherapi/WeatherRest/Repository/WeatherMetricRepository.class
+com/consumer/weatherapi/WeatherRest/Model/WeatherMetric.class
+com/consumer/weatherapi/WeatherRest/Controller/WeatherMetricController.class
+com/consumer/weatherapi/WeatherRest/Service/WeatherMetricQueryService.class
+com/consumer/weatherapi/WeatherRest/Controller/KafkaControlController.class
