@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "aa1ae908-ec36-4d7b-9ac2-b23e38ff4c61",
+		"name": "Weather Consumer API Template",
+		"description": "## Notes:\n\nFor AddMetric Endpoint ([http://localhost:8080/metrics](http://localhost:8080/metrics)):\n\n- sensorID should not be null\n    \n- timestamp should be in **ISO 8601 UTC** format (ending in `Z`)\n    \n\nFor Query Endpoint ([http://localhost:8080/metrics/query](http://localhost:8080/metrics/query))\n\n- `sensorIds`: `[]` means **all sensors**.\n    \n- `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n    \n- Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n    \n- Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`. Notes:\n    - `sensorIds`: `[]` means **all sensors**.\n        \n    - `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n        \n    - Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n        \n    - Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13530165"
+	},
+	"item": [
+		{
+			"name": "Add metric endpoint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sensorId\": \"sensor1\",\n  \"temperature\": 25.5,\n  \"humidity\": 60.2,\n  \"timestamp\": \"2025-04-04T14:30:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/metrics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"metrics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Average temperature and humidity for all sensors (last 24 hours)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sensorIds\": [],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"avg\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/metrics/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"metrics",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Min humidity out of two sensors within date range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sensorIds\": [\"sensor1\", \"sensor2\"],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"min\",\n  \"startDate\": \"2025-04-01T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/metrics/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"metrics",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": " Sum of temperature and humidity for a Sensor",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"sum\",\n  \"startDate\": \"2025-04-04T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/metrics/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"metrics",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Average temperature from a sensor in the last 2 days",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\"],\n  \"statistic\": \"avg\",\n  \"startDate\": \"2025-04-02T00:00:00Z\",\n  \"endDate\": \"2025-04-06T23:59:59Z\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/metrics/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"metrics",
+						"query"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
