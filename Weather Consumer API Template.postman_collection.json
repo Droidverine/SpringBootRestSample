@@ -2,160 +2,358 @@
 	"info": {
 		"_postman_id": "aa1ae908-ec36-4d7b-9ac2-b23e38ff4c61",
 		"name": "Weather Consumer API Template",
-		"description": "## Notes:\n\nFor AddMetric Endpoint ([http://localhost:8080/metrics](http://localhost:8080/metrics)):\n\n- sensorID should not be null\n    \n- timestamp should be in **ISO 8601 UTC** format (ending in `Z`)\n    \n\nFor Query Endpoint ([http://localhost:8080/metrics/query](http://localhost:8080/metrics/query))\n\n- `sensorIds`: `[]` means **all sensors**.\n    \n- `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n    \n- Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n    \n- Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`. Notes:\n    - `sensorIds`: `[]` means **all sensors**.\n        \n    - `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n        \n    - Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n        \n    - Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`.",
+		"description": "## Notes:\n\nFor AddMetric Endpoint ([http://localhost:8080/v1/](http://localhost:8080/metrics)[metrics](http://localhost:8080/metrics)):\n\n- sensorID should not be null\n    \n- timestamp should be in **ISO 8601 UTC** format (ending in `Z`)\n    \n\nFor Query **In-Memory Aggregation** Endpoint ([http://localhost:8080/v1/metrics/query](http://localhost:8080/metrics/query))\n\nFor Query **Database-Level Aggregation** Endpoint ([http://localhost:8080/v1/metrics/query](http://localhost:8080/metrics/query))\n\n- `sensorIds`: `[]` means **all sensors**.\n    \n- `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n    \n- Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n    \n- Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`. Notes:\n    \n    - `sensorIds`: `[]` means **all sensors**.\n        \n    - `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n        \n    - Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n        \n    - Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`.\n        \n\n| Endpoint | Action |\n| --- | --- |\n| `POST /v1/metrics` | Add new metric |\n| `POST /v1/metrics/query` | Query in-memory aggregated data |\n| `POST /v1/metrics/query-db` | Query DB aggregated data |",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "13530165"
 	},
 	"item": [
 		{
-			"name": "Add metric endpoint",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"sensorId\": \"sensor1\",\n  \"temperature\": 25.5,\n  \"humidity\": 60.2,\n  \"timestamp\": \"2025-04-04T14:30:00\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Add Metric Endpoint",
+			"item": [
+				{
+					"name": "Add metric endpoint",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorId\": \"sensorshiv\",\n  \"temperature\": 25.5,\n  \"humidity\": 99,\n  \"timestamp\": \"2025-04-04T14:30:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/metrics",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"metrics"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"description": "`POST /v1/metrics`Add new metric\n\nFor AddMetric Endpoint ([http://localhost:8080/v1/](http://localhost:8080/metrics)[metrics](http://localhost:8080/metrics)):\n\n- sensorID should not be null\n    \n- humidity ( 0 to 100)\n    \n- temperature (0 to 100)\n    \n- timestamp should be in **ISO 8601 UTC** format (ending in `Z`)\n    \n\n  \nSample json  \n`   { \"sensorId\": \"sensorkeep\",`\n\n`\"temperature\": 35.5,`\n\n`\"humidity\": 101,`\n\n`\"timestamp\": \"2025-04-04T14:30:00Z\"}`"
 		},
 		{
-			"name": "Average temperature and humidity for all sensors (last 24 hours)",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"sensorIds\": [],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"avg\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Database-Level Aggregation Query Endpoint",
+			"item": [
+				{
+					"name": "Average temperature and humidity for all sensors (last 24 hours)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"max\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query-db",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query-db"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/metrics/query",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"metrics",
-						"query"
-					]
+				{
+					"name": "Min humidity out of two sensors within date range",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"sensor1\", \"sensor2\"],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"min\",\n  \"startDate\": \"2025-04-01T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query-db",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query-db"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": " Sum of temperature and humidity for a Sensor",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"sensorshiv\"],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"sum\",\n  \"startDate\": \"2025-04-04T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query-db",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query-db"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Average temperature from a sensor in the last 2 days",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\"],\n  \"statistic\": \"avg\",\n  \"startDate\": \"2025-04-02T00:00:00Z\",\n  \"endDate\": \"2025-04-06T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query-db",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query-db"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"description": "**`POST /v1/metrics/query-db`**\n\nFor Query **Database-Level Aggregation** Endpoint ([http://localhost:8080/v1/metrics/query](http://localhost:8080/metrics/query))\n\n- `sensorIds`: `[]` means **all sensors**.\n    \n- `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n    \n- Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n    \n- Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`. Notes:\n    \n    - `sensorIds`: `[]` means **all sensors**.\n        \n    - `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n        \n    - Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n        \n    - Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`."
 		},
 		{
-			"name": "Min humidity out of two sensors within date range",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"sensorIds\": [\"sensor1\", \"sensor2\"],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"min\",\n  \"startDate\": \"2025-04-01T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "In-Memory Aggregation Endpoint",
+			"item": [
+				{
+					"name": "Average temperature and humidity for all sensors (last 24 hours) Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"max\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/metrics/query",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"metrics",
-						"query"
-					]
+				{
+					"name": "Min humidity out of two sensors within date range Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"sensor1\", \"sensor2\"],\n  \"metrics\": [\"humidity\"],\n  \"statistic\": \"min\",\n  \"startDate\": \"2025-04-01T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": " Sum of temperature and humidity for a Sensor Copy",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"SCALA\"],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"sum\",\n  \"startDate\": \"2025-04-04T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Average temperature from a sensor in the last 2 days Copy",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\"],\n  \"statistic\": \"avg\",\n  \"startDate\": \"2025-04-02T00:00:00Z\",\n  \"endDate\": \"2025-04-06T23:59:59Z\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/metrics/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"metrics",
+								"query"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"description": "# `POST /v1/metrics/query`\n\nQuery in-memory aggregated data\n\nFor Query **In-Memory Aggregation** Endpoint ([http://localhost:8080/v1/metrics/query](http://localhost:8080/metrics/query))\n\n- `sensorIds`: `[]` means **all sensors**.\n    \n- `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n    \n- Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n    \n- Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`. Notes:\n    \n    - `sensorIds`: `[]` means **all sensors**.\n        \n    - `startDate` and `endDate` must be in **ISO 8601 UTC** format (ending in `Z`).\n        \n    - Supported metrics: `\"temperature\"` and `\"humidity\"` (or both).\n        \n    - Supported statistics: `\"avg\"`, `\"min\"`, `\"max\"`, `\"sum\"`."
 		},
 		{
-			"name": " Sum of temperature and humidity for a Sensor",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\", \"humidity\"],\n  \"statistic\": \"sum\",\n  \"startDate\": \"2025-04-04T00:00:00Z\",\n  \"endDate\": \"2025-04-05T23:59:59Z\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Kafka Consumer start & stop Endpoint",
+			"item": [
+				{
+					"name": "kafka/stop",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/kafka/stop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"kafka",
+								"stop"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/metrics/query",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"metrics",
-						"query"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Average temperature from a sensor in the last 2 days",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"sensorIds\": [\"sensor1\"],\n  \"metrics\": [\"temperature\"],\n  \"statistic\": \"avg\",\n  \"startDate\": \"2025-04-02T00:00:00Z\",\n  \"endDate\": \"2025-04-06T23:59:59Z\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "kafka/start",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/kafka/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"kafka",
+								"start"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/metrics/query",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"metrics",
-						"query"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"description": "You will need producer to use these, please see following link to project for Reference: : [https://github.com/Droidverine/KafkaWeatherDataProducer.git](https://github.com/Droidverine/KafkaWeatherDataProducer.git)"
 		}
 	]
 }

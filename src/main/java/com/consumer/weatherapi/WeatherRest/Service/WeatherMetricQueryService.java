@@ -1,8 +1,12 @@
 package com.consumer.weatherapi.WeatherRest.Service;
 
+import com.consumer.weatherapi.WeatherRest.DTO.AggregatedMetricsResponse;
 import com.consumer.weatherapi.WeatherRest.DTO.MetricQueryRequest;
 import com.consumer.weatherapi.WeatherRest.Model.WeatherMetric;
 import com.consumer.weatherapi.WeatherRest.Repository.WeatherMetricRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,13 +18,15 @@ import java.util.stream.Collectors;
 public class WeatherMetricQueryService {
 
     private final WeatherMetricRepository repository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public WeatherMetricQueryService(WeatherMetricRepository repository) {
         this.repository = repository;
     }
 
 
-
+    //To Get sensor/sensors data in given date and time and manually performing avg,min,max,sum in memory. This is useful for NOSQL DBs
     public Map<String, Double> queryMetrics(MetricQueryRequest request) {
         ZonedDateTime startZoned = request.getStartDate() != null
                 ? request.getStartDate()
@@ -44,9 +50,12 @@ public class WeatherMetricQueryService {
             List<Double> values = metrics.stream()
                     .map(m -> {
                         switch (metric) {
-                            case "temperature": return m.getTemperature();
-                            case "humidity": return m.getHumidity();
-                            default: return null;
+                            case "temperature":
+                                return m.getTemperature();
+                            case "humidity":
+                                return m.getHumidity();
+                            default:
+                                return null;
                         }
                     })
                     .filter(Objects::nonNull)
@@ -72,4 +81,52 @@ public class WeatherMetricQueryService {
 
         return result;
     }
+
+//DB query version when scaling or performance is critical (e.g., dashboards, analytics). Preferred for SQL Datbases
+    public List<AggregatedMetricsResponse> queryMetricsFromDb(List<String> sensorIds, List<String> metrics, String statistic, LocalDateTime start, LocalDateTime end) {
+        List<AggregatedMetricsResponse> results = new ArrayList<>();
+
+        for (String metric : metrics) {
+            String column;
+            if (metric.equalsIgnoreCase("temperature")) {
+                column = "temperature";
+            } else if (metric.equalsIgnoreCase("humidity")) {
+                column = "humidity";
+            } else {
+                continue;
+            }
+
+            String function;
+            switch (statistic.toLowerCase()) {
+                case "avg": function = "AVG"; break;
+                case "min": function = "MIN"; break;
+                case "max": function = "MAX"; break;
+                case "sum": function = "SUM"; break;
+                default: continue;
+            }
+
+            StringBuilder sql = new StringBuilder("SELECT " + function + "(" + column + ") FROM weather_metric WHERE timestamp BETWEEN :start AND :end");
+
+            if (sensorIds != null && !sensorIds.isEmpty()) {
+                sql.append(" AND sensor_id IN :sensorIds");
+            }
+
+            Query query = entityManager.createNativeQuery(sql.toString());
+
+            query.setParameter("start", start);
+            query.setParameter("end", end);
+            if (sensorIds != null && !sensorIds.isEmpty()) {
+                query.setParameter("sensorIds", sensorIds);
+            }
+
+            Double value = ((Number) query.getSingleResult()).doubleValue();
+            results.add(new AggregatedMetricsResponse(metric, value));
+        }
+
+        return results;
+    }
+
+
+
+
 }

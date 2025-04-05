@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//Controller to start/stop kafka listener
 @RestController
 @RequestMapping("/kafka")
 public class KafkaControlController {
@@ -16,14 +17,32 @@ public class KafkaControlController {
 
     @PostMapping("/start")
     public String startListener() {
-        registry.getListenerContainer("weatherListener").start();
-        return "Kafka listener started.";
+        try {
+            var container = registry.getListenerContainer("weatherListener");
+            if (container != null && !container.isRunning()) {
+                container.start();
+                return " Kafka listener started.";
+            } else {
+                return " Kafka listener is already running or not configured.";
+            }
+        } catch (Exception e) {
+            return " Failed to start Kafka listener: " + e.getMessage();
+        }
     }
 
     @PostMapping("/stop")
     public String stopListener() {
-        registry.getListenerContainer("weatherListener").stop();
-        return "Kafka listener stopped.";
+        try {
+            var container = registry.getListenerContainer("weatherListener");
+            if (container != null && container.isRunning()) {
+                container.stop();
+                return " Kafka listener stopped.";
+            } else {
+                return " Kafka listener is already stopped or not configured.";
+            }
+        } catch (Exception e) {
+            return " Failed to stop Kafka listener: " + e.getMessage();
+        }
     }
 }
 

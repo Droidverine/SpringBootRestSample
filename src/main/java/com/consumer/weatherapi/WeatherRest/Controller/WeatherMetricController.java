@@ -1,5 +1,6 @@
 package com.consumer.weatherapi.WeatherRest.Controller;
 
+import com.consumer.weatherapi.WeatherRest.DTO.AggregatedMetricsResponse;
 import com.consumer.weatherapi.WeatherRest.DTO.MetricQueryRequest;
 import com.consumer.weatherapi.WeatherRest.Model.WeatherMetric;
 import com.consumer.weatherapi.WeatherRest.Repository.WeatherMetricRepository;
@@ -8,24 +9,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
+//Controller for Rest Endpoints for adding metrics & querying
 @RestController
-@RequestMapping("/metrics")
+@RequestMapping("v1/metrics")
 public class WeatherMetricController {
 
     private final WeatherMetricRepository repository;
     private final WeatherMetricQueryService queryService;
     private final Validator validator; // ✅ Declare the validator
 
-    // ✅ Constructor injection for all dependencies
+    // Constructor injection for all dependencies
     public WeatherMetricController(WeatherMetricRepository repository,
                                    WeatherMetricQueryService queryService,
                                    Validator validator) {
@@ -46,13 +53,19 @@ public class WeatherMetricController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        repository.save(metric);
-        return ResponseEntity.ok("✅ Metric saved via REST.");
+        WeatherMetric savedMetric = repository.save(metric);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Metric saved successfully.");
+        response.put("metricId", savedMetric.getId());
+        response.put("sensorId", savedMetric.getSensorId());
+        response.put("timestamp", savedMetric.getTimestamp());
+
+        return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/query")
-        public ResponseEntity<?> queryMetrics(@Valid @RequestBody MetricQueryRequest request) {
-        // Custom validations
+    public ResponseEntity<?> queryMetrics(@Valid @RequestBody MetricQueryRequest request) {
         if (!List.of("avg", "min", "max", "sum").contains(request.getStatistic())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid statistic: must be one of avg, min, max, sum"));
         }
@@ -73,7 +86,25 @@ public class WeatherMetricController {
             }
         }
 
-        return ResponseEntity.ok(queryService.queryMetrics(request));
+        Map<String, Double> result = queryService.queryMetrics(request);
+        List<AggregatedMetricsResponse> formatted = convertToListResponse(result);
+        return ResponseEntity.ok(formatted);
     }
+
+    @PostMapping("/query-db")
+    public ResponseEntity<?> queryMetricsDb(@RequestBody MetricQueryRequest request) {
+        LocalDateTime start = request.getStartDate() != null ? request.getStartDate().toLocalDateTime() : LocalDateTime.now().minusDays(1);
+        LocalDateTime end = request.getEndDate() != null ? request.getEndDate().toLocalDateTime() : LocalDateTime.now();
+        List<AggregatedMetricsResponse> result = queryService.queryMetricsFromDb(request.getSensorIds(), request.getMetrics(), request.getStatistic(), start, end);
+        return ResponseEntity.ok(result);
+    }
+
+    private List<AggregatedMetricsResponse> convertToListResponse(Map<String, Double> input) {
+        return input.entrySet()
+                .stream()
+                .map(entry -> new AggregatedMetricsResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
 
 }

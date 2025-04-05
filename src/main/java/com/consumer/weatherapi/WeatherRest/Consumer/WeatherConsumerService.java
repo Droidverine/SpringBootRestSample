@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WeatherConsumerService {
-
+    //Kafka Consumer Service Logic
     private final WeatherMetricRepository repository;
     private final ObjectMapper objectMapper;
 
