@@ -1,6 +1,7 @@
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/Consumer/WeatherConsumerService.java
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/Controller/KafkaControlController.java
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/Controller/WeatherMetricController.java
+/home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/DTO/AggregatedMetricsResponse.java
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/DTO/MetricQueryRequest.java
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/Model/WeatherMetric.java
 /home/droidverine/Genysis/github/SpringBootRestSample/src/main/java/com/consumer/weatherapi/WeatherRest/Repository/WeatherMetricRepository.java

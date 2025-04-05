@@ -21,9 +21,8 @@ import java.util.List;
 
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
-//Controller for Rest Endpoints for adding metrics & querying
+//Controller for Rest Endpoints for adding metrics & que
 @RestController
 @RequestMapping("v1/metrics")
 public class WeatherMetricController {
@@ -86,25 +85,51 @@ public class WeatherMetricController {
             }
         }
 
-        Map<String, Double> result = queryService.queryMetrics(request);
-        List<AggregatedMetricsResponse> formatted = convertToListResponse(result);
-        return ResponseEntity.ok(formatted);
+        return ResponseEntity.ok(queryService.queryMetrics(request));
     }
 
     @PostMapping("/query-db")
     public ResponseEntity<?> queryMetricsDb(@RequestBody MetricQueryRequest request) {
+        // Validate statistic
+        if (!List.of("avg", "min", "max", "sum").contains(request.getStatistic())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid statistic: must be one of avg, min, max, sum"));
+        }
+
+        // Validate metrics
+        for (String metric : request.getMetrics()) {
+            if (!List.of("temperature", "humidity").contains(metric)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid metric: " + metric + " (allowed: temperature, humidity)"));
+            }
+        }
+
+        // Validate date range
+        if (request.getStartDate() != null && request.getEndDate() != null) {
+            if (request.getStartDate().isAfter(request.getEndDate())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "startDate must be before endDate"));
+            }
+
+            long days = java.time.Duration.between(request.getStartDate(), request.getEndDate()).toDays();
+            if (days < 1 || days > 31) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Date range must be between 1 day and 1 month"));
+            }
+        }
+
+        // Default to 24h if no dates provided
         LocalDateTime start = request.getStartDate() != null ? request.getStartDate().toLocalDateTime() : LocalDateTime.now().minusDays(1);
         LocalDateTime end = request.getEndDate() != null ? request.getEndDate().toLocalDateTime() : LocalDateTime.now();
-        List<AggregatedMetricsResponse> result = queryService.queryMetricsFromDb(request.getSensorIds(), request.getMetrics(), request.getStatistic(), start, end);
+
+        List<AggregatedMetricsResponse> result = queryService.queryMetricsFromDb(
+                request.getSensorIds(), request.getMetrics(), request.getStatistic(), start, end
+        );
+
+        if (result == null || result.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "No data available for the given query parameters"));
+        }
+
         return ResponseEntity.ok(result);
     }
 
-    private List<AggregatedMetricsResponse> convertToListResponse(Map<String, Double> input) {
-        return input.entrySet()
-                .stream()
-                .map(entry -> new AggregatedMetricsResponse(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-    }
+
 
 
 }

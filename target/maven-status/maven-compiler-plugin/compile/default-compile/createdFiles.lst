@@ -1,5 +1,6 @@
 com/consumer/weatherapi/WeatherRest/Consumer/WeatherConsumerService.class
 com/consumer/weatherapi/WeatherRest/DTO/MetricQueryRequest.class
+com/consumer/weatherapi/WeatherRest/DTO/AggregatedMetricsResponse.class
 com/consumer/weatherapi/WeatherRest/WeatherRestApplication.class
 com/consumer/weatherapi/WeatherRest/Repository/WeatherMetricRepository.class
 com/consumer/weatherapi/WeatherRest/Model/WeatherMetric.class

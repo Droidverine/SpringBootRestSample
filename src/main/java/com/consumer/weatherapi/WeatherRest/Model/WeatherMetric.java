@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 @Entity
 public class WeatherMetric {
 
-        @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -83,48 +83,55 @@ public class WeatherMetricQueryService {
     }
 
 //DB query version when scaling or performance is critical (e.g., dashboards, analytics). Preferred for SQL Datbases
-    public List<AggregatedMetricsResponse> queryMetricsFromDb(List<String> sensorIds, List<String> metrics, String statistic, LocalDateTime start, LocalDateTime end) {
-        List<AggregatedMetricsResponse> results = new ArrayList<>();
+public List<AggregatedMetricsResponse> queryMetricsFromDb(List<String> sensorIds, List<String> metrics, String statistic, LocalDateTime start, LocalDateTime end) {
+    List<AggregatedMetricsResponse> results = new ArrayList<>();
 
-        for (String metric : metrics) {
-            String column;
-            if (metric.equalsIgnoreCase("temperature")) {
-                column = "temperature";
-            } else if (metric.equalsIgnoreCase("humidity")) {
-                column = "humidity";
-            } else {
-                continue;
-            }
-
-            String function;
-            switch (statistic.toLowerCase()) {
-                case "avg": function = "AVG"; break;
-                case "min": function = "MIN"; break;
-                case "max": function = "MAX"; break;
-                case "sum": function = "SUM"; break;
-                default: continue;
-            }
-
-            StringBuilder sql = new StringBuilder("SELECT " + function + "(" + column + ") FROM weather_metric WHERE timestamp BETWEEN :start AND :end");
-
-            if (sensorIds != null && !sensorIds.isEmpty()) {
-                sql.append(" AND sensor_id IN :sensorIds");
-            }
-
-            Query query = entityManager.createNativeQuery(sql.toString());
-
-            query.setParameter("start", start);
-            query.setParameter("end", end);
-            if (sensorIds != null && !sensorIds.isEmpty()) {
-                query.setParameter("sensorIds", sensorIds);
-            }
-
-            Double value = ((Number) query.getSingleResult()).doubleValue();
-            results.add(new AggregatedMetricsResponse(metric, value));
+    for (String metric : metrics) {
+        String column;
+        if (metric.equalsIgnoreCase("temperature")) {
+            column = "temperature";
+        } else if (metric.equalsIgnoreCase("humidity")) {
+            column = "humidity";
+        } else {
+            continue; // skip unknown metric
         }
 
-        return results;
+        String function;
+        switch (statistic.toLowerCase()) {
+            case "avg": function = "AVG"; break;
+            case "min": function = "MIN"; break;
+            case "max": function = "MAX"; break;
+            case "sum": function = "SUM"; break;
+            default: continue; // skip unknown stat
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT " + function + "(" + column + ") FROM weather_metric WHERE timestamp BETWEEN :start AND :end");
+
+        if (sensorIds != null && !sensorIds.isEmpty()) {
+            sql.append(" AND sensor_id IN :sensorIds");
+        }
+
+        Query query = entityManager.createNativeQuery(sql.toString());
+        query.setParameter("start", start);
+        query.setParameter("end", end);
+
+        if (sensorIds != null && !sensorIds.isEmpty()) {
+            query.setParameter("sensorIds", sensorIds);
+        }
+
+        Object result = query.getSingleResult();
+
+        if (result != null) {
+            Double value = ((Number) result).doubleValue();
+            results.add(new AggregatedMetricsResponse(metric, value));
+        } else {
+            results.add(new AggregatedMetricsResponse(metric, null)); // 👈 or skip this if you prefer
+        }
     }
+
+    return results;
+}
+
 
 
 
