@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class WeatherMetricQueryServiceTest {
-
+//In-memory query tests
     @Test
     void testQueryMetrics_avgTemperature() {
         WeatherMetricRepository mockRepo = Mockito.mock(WeatherMetricRepository.class);

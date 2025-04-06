@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mysql-consumer:
+    image: mysql:8.0
+    container_name: mysql-consumer
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-weather_db}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    ports:
+      - "${MYSQL_PORT:-3308}:3306"
+    volumes:
+      - mysql-consumer-data:/var/lib/mysql
+    networks:
+      - localnet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "${PHPMYADMIN_PORT:-8081}:80"
+    environment:
+      PMA_HOST: mysql-consumer
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    depends_on:
+      - mysql-consumer
+    networks:
+      - localnet
+
+volumes:
+  mysql-consumer-data:
+
+networks:
+  localnet:
+

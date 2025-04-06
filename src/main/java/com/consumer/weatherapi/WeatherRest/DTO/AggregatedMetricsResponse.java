@@ -1,5 +1,7 @@
 package com.consumer.weatherapi.WeatherRest.DTO;
 
+
+//DTO For Native DB query
 public class AggregatedMetricsResponse {
     private String metric;
     private Double value;

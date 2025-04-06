@@ -29,11 +29,14 @@ git clone https://github.com/Droidverine/SpringBootRestSample.git
 cd SpringBootRestSample
 
 # Start MySQL and PhpMyAdmin
-docker-compose up -d
+ docker-compose -f docker-compose.db.yml up -d
 
 # Build and run the app
 mvn clean package
 java -jar target/WeatherRest-0.0.1-SNAPSHOT.jar
+
+#Alternatively you can run the app directly with following & setup the  ports in .env file ( Downloads required java,maven,mysql,phpadmin. In simple terms ready to deploy).
+docker-compose up -d
 ```
 
 Access PhpMyAdmin: [http://localhost:8081](http://localhost:8081)  
@@ -113,13 +116,11 @@ Or use your IDE (e.g., IntelliJ):
 
 ### 🔹 Test Coverage
 
-| Test Class                      | Description                            |
-|---------------------------------|----------------------------------------|
+| Test Class                      | Description                                 |
+|---------------------------------|---------------------------------------------|
 | `WeatherMetricQueryServiceTest` | Verifies logic for querying weather metrics |
-| `WeatherMetricControllerTest`   |  |
+| `WeatherMetricControllerTest`   | Verfies Rest endpoints and responses        |
 
-
-More tests (Kafka, REST controllers) can be added.
 
 ###  Technologies Used
 
@@ -131,7 +132,7 @@ More tests (Kafka, REST controllers) can be added.
 
 - `Controller` - REST endpoints
 - `Consumer` - Kafka listener
-- `DTO` - Request models
+- `DTO` - Data Transfer Object
 - `Model` - JPA Entities
 - `Repository` - Data persistence
 - `Service` - Business logic

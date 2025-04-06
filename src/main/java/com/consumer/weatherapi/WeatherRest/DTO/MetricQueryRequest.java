@@ -5,7 +5,7 @@ import java.util.List;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-
+//DTO For in-memory query
 public class MetricQueryRequest {
     private List<String> sensorIds;
     
