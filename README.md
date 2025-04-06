@@ -11,6 +11,7 @@
 -  Enable/Disable Kafka listener at runtime via REST ( You will need producer though : https://github.com/Droidverine/KafkaWeatherDataProducer.git)
 -  Input validation and clean JSON error responses
 
+
 ---
 
 ## 📦 Requirements
@@ -152,3 +153,5 @@ Or use your IDE (e.g., IntelliJ):
 - `Service` - Business logic
 
 ---
+## Sample SQL file that can be imported in phpmyadmin 
+https://github.com/Droidverine/SpringBootRestSample/blob/df22d5fa43fc95a6f489753f018ad67a1730acb6/weather_metric_sample_inserts.sql
