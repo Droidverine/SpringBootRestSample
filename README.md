@@ -28,15 +28,17 @@
 git clone https://github.com/Droidverine/SpringBootRestSample.git
 cd SpringBootRestSample
 
-# Start MySQL and PhpMyAdmin
- docker-compose -f docker-compose.db.yml up -d
 
-# Build and run the app
-mvn clean package
+
+# Start MySQL and PhpMyAdmin ( if required you can change mysql & phpmyadmin ports in .env file)
+docker-compose -f docker-compose.db.yml --env-file ./env up -d
+
+# Build and run the app  ( if mysql config changed please make sure that you export with correct url 
+(i.e. export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3308/weather_db)
+
 java -jar target/WeatherRest-0.0.1-SNAPSHOT.jar
 
-#Alternatively you can run the app directly with following & setup the  ports in .env file ( Downloads required java,maven,mysql,phpadmin. In simple terms ready to deploy).
-docker-compose up -d
+(Default port is 8080 for application, if you want to change please export APP_PORT={yourportnumber} i.e.export APP_PORT=9090)
 ```
 
 Access PhpMyAdmin: [http://localhost:8081](http://localhost:8081)  
@@ -49,7 +51,7 @@ Default credentials:
 
 ## 📮 Postman Collection
 
-Exportable Weather API Postman Collection - https://github.com/Droidverine/SpringBootRestSample/blob/2b8e8bd4a51cb868872efa442745a7c266fe1af0/Weather%20Consumer%20API%20Template.postman_collection.json
+Importable Weather API Postman Collection - https://github.com/Droidverine/SpringBootRestSample/blob/2b8e8bd4a51cb868872efa442745a7c266fe1af0/Weather%20Consumer%20API%20Template.postman_collection.json
 
 ---
 
@@ -82,6 +84,18 @@ Query example – average temperature and humidity for all sensors in the last 2
 }
 ```
 
+### POST `/metrics/query_db`
+
+Query example – max temperature and humidity for all sensors in the last 24 hours:
+
+```json
+{
+  "sensorIds": [],
+  "metrics": ["temperature", "humidity"],
+  "statistic": "max"
+}
+```
+
 More examples in the Postman collection.
 
 ---
@@ -105,7 +119,7 @@ This project includes **unit tests** using **JUnit 5** and **Mockito** to verify
 
 ### Run All Tests
 
-Run the following command in the project root:
+Run the following command in the project root (in case of port change some tests might fail):
 
 ```
 mvn test
