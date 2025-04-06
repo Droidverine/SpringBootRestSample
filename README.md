@@ -113,9 +113,11 @@ Or use your IDE (e.g., IntelliJ):
 
 ### 🔹 Test Coverage
 
-| Test Class                        | Description                            |
-|----------------------------------|----------------------------------------|
-| `WeatherMetricQueryServiceTest`  | Verifies logic for querying weather metrics |
+| Test Class                      | Description                            |
+|---------------------------------|----------------------------------------|
+| `WeatherMetricQueryServiceTest` | Verifies logic for querying weather metrics |
+| `WeatherMetricControllerTest`   |  |
+
 
 More tests (Kafka, REST controllers) can be added.
 

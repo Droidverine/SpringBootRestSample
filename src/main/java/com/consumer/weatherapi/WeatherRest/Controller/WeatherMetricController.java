@@ -84,8 +84,12 @@ public class WeatherMetricController {
                 return ResponseEntity.badRequest().body(Map.of("error", "Date range must be between 1 day and 1 month"));
             }
         }
+        Map<String, Double> result = queryService.queryMetrics(request);
+        List<AggregatedMetricsResponse> formatted = result.entrySet().stream()
+                .map(entry -> new AggregatedMetricsResponse(entry.getKey(), entry.getValue()))
+                .toList();
 
-        return ResponseEntity.ok(queryService.queryMetrics(request));
+        return ResponseEntity.ok(formatted);
     }
 
     @PostMapping("/query-db")
@@ -128,8 +132,6 @@ public class WeatherMetricController {
 
         return ResponseEntity.ok(result);
     }
-
-
 
 
 }

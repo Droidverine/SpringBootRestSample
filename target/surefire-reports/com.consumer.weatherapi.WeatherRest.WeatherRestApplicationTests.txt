@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.consumer.weatherapi.WeatherRest.WeatherRestApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.835 s -- in com.consumer.weatherapi.WeatherRest.WeatherRestApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.537 s -- in com.consumer.weatherapi.WeatherRest.WeatherRestApplicationTests
